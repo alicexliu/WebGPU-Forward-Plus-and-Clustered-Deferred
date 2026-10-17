@@ -55,10 +55,9 @@ fn main(@builtin(global_invocation_id) globalIdx: vec3u) {
     let tileY = remainder / ${clusterX};
     let tileX = remainder % ${clusterX};
 
-    clusterSet.clusters[clusterIdx].numLights = 0;
-
     // calculating cluster bounds
-    let cluster = clusterSet.clusters[clusterIdx];
+    let cluster = &clusterSet.clusters[clusterIdx];
+    (*cluster).numLights = 0u;
 
     // calculate screen space bounds
     let deltaX = 2.0 / ${clusterX};
@@ -102,11 +101,11 @@ fn main(@builtin(global_invocation_id) globalIdx: vec3u) {
             // add the light to the cluster's light list
             // stop adding lights if the maximum number of lights is reached
             if (lightCount < ${maxLightsPerCluster}) {
-                clusterSet.clusters[clusterIdx].lightIndices[lightCount] = i;
+                (*cluster).lightIndices[lightCount] = i;
                 lightCount++;
             }
         }
     }
 
-    clusterSet.clusters[clusterIdx].numLights = lightCount;
+    (*cluster).numLights = lightCount;
 }

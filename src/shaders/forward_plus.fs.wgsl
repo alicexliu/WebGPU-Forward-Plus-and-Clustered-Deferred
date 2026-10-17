@@ -51,12 +51,13 @@ fn main(in: FragmentInput) -> @location(0) vec4f
     let clusterZIdx = min(u32(logRatio * f32(${clusterZ})), ${clusterZ}u - 1u);
 
     let clusterIdx = clusterXIdx + clusterYIdx * ${clusterX}u + clusterZIdx * ${clusterX}u * ${clusterY}u;
-    let cluster = clusterSet.clusters[clusterIdx];
+    let cluster = &clusterSet.clusters[clusterIdx];
+    let numLights = (*cluster).numLights;
 
     // accumulate total light contribution for the fragment
     var totalLightContrib = vec3f(0, 0, 0);
-    for (var lightIdx = 0u; lightIdx < cluster.numLights; lightIdx++) {
-        let light = lightSet.lights[cluster.lightIndices[lightIdx]];
+    for (var lightIdx = 0u; lightIdx < numLights; lightIdx++) {
+        let light = lightSet.lights[(*cluster).lightIndices[lightIdx]];
         totalLightContrib += calculateLightContrib(light, in.pos, normalize(in.nor));
     }
 
