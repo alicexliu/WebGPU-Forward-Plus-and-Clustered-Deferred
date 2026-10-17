@@ -1,9 +1,9 @@
-import { Mat4, mat4, Vec3, vec3 } from "wgpu-matrix";
+import { Mat4, mat4, Vec3, vec3, vec2 } from "wgpu-matrix";
 import { toRadians } from "../math_util";
 import { device, canvas, fovYDegrees, aspectRatio } from "../renderer";
 
 class CameraUniforms {
-    readonly buffer = new ArrayBuffer(16 * 4);
+    readonly buffer = new ArrayBuffer(52 * 4);
     private readonly floatView = new Float32Array(this.buffer);
 
     set viewProjMat(mat: Float32Array) {
@@ -11,7 +11,26 @@ class CameraUniforms {
         this.floatView.set(mat.subarray(0, 16), 0);
     }
 
-    // TODO-2: add extra functions to set values needed for light clustering here
+    // : add extra functions to set values needed for light clustering here
+    set inverseProjMat(mat: Float32Array) {
+        this.floatView.set(mat.subarray(0, 16), 16);
+    }
+
+    set viewMat(mat: Float32Array) {
+        this.floatView.set(mat.subarray(0, 16), 32);
+    }
+
+    set screenDim(dim: Float32Array | [number, number]) {
+        this.floatView.set(dim, 48);
+    }
+
+    set nearPlane(nearPlane: number) {
+        this.floatView[50] = nearPlane;
+    }
+
+    set farPlane(farPlane: number) {
+        this.floatView[51] = farPlane;
+    }
 }
 
 export class Camera {
@@ -134,10 +153,16 @@ export class Camera {
         const lookPos = vec3.add(this.cameraPos, vec3.scale(this.cameraFront, 1));
         const viewMat = mat4.lookAt(this.cameraPos, lookPos, [0, 1, 0]);
         const viewProjMat = mat4.mul(this.projMat, viewMat);
+        
         // TODO-1.1: set `this.uniforms.viewProjMat` to the newly calculated view proj mat
         this.uniforms.viewProjMat = viewProjMat;
 
         // TODO-2: write to extra buffers needed for light clustering here
+        this.uniforms.inverseProjMat = mat4.inverse(this.projMat);
+        this.uniforms.viewMat = viewMat;
+        this.uniforms.screenDim = vec2.create(canvas.width, canvas.height);
+        this.uniforms.nearPlane = Camera.nearPlane;
+        this.uniforms.farPlane = Camera.farPlane;
 
         // TODO-1.1: upload `this.uniforms.buffer` (host side) to `this.uniformsBuffer` (device side)
         // check `lights.ts` for examples of using `device.queue.writeBuffer()`
