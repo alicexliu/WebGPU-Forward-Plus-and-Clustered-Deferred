@@ -36,7 +36,7 @@ export const constants = {
     
     clusterX: 32, 
     clusterY: 18,
-    clusterZ: 28,
+    clusterZ: 48,
 
     lightRadius: 2
 };
