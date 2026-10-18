@@ -26,6 +26,7 @@ import clusteringComputeRaw from './clustering.cs.wgsl?raw';
 export const constants = {
     bindGroup_scene: 0,
     bindGroup_model: 1,
+    bindGroup_gBuffer: 1,
     bindGroup_material: 2,
 
     moveLightsWorkgroupSize: 128,
