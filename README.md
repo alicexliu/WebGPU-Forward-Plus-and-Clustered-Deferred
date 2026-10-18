@@ -18,8 +18,6 @@ WebGL Forward+ and Clustered Deferred Shading
   Click on the image or gif above to go to live demo site!
 </p>
 
-[![](img/video.mp4)]()
-
 ## Overview
 
 In this project, I implemented WebGPU based naive forward, forward+, and clustered deferred rendering using typescript and WGSL. Each implementation is described more in detail below! 
